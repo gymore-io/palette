@@ -14,6 +14,10 @@ A color management and conversion library that focuses on maintaining correctnes
 
 [Master branch](https://ogeon.github.io/docs/palette/master/palette/index.html)
 
+## Minimum Supported Rust Version (MSRV)
+
+This version has been automatically tested with version `1.48.0` and the `stable`, `beta`, and `nightly` channels. Future versions of the library may advance the minimum supported version to make use of new language features, but will consider it a breaking change.
+
 ## Contributing
 
 All sorts of contributions are welcome (<strike>including</strike> especially speling corrections), so take a look at [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines, if you are interested.

@@ -2,6 +2,10 @@
 
 Contains derive macros for the [`palette`](https://crates.io/crates/palette/) crate. They are all reexported through `palette` and require it to be a dependency, so there is typically no reason to use this crate directly.
 
+## Minimum Supported Rust Version (MSRV)
+
+This version has been automatically tested with version `1.48.0` and the `stable`, `beta`, and `nightly` channels. Future versions of the library may advance the minimum supported version to make use of new language features, but will consider it a breaking change.
+
 ## License
 
 Licensed under either of

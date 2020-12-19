@@ -4,6 +4,7 @@ cache:
   directories:
     - $HOME/.cargo
 rust:
+  - 1.48.0
   - stable
   - beta
   - nightly

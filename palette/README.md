@@ -12,6 +12,10 @@ A color management and conversion library that focuses on maintaining correctnes
 * Supports `#[no_std]`, with ony gradients and dynamic named colors disabled.
 * Optional `serde` and `rand` integration.
 
+## Minimum Supported Rust Version (MSRV)
+
+This version has been automatically tested with version `1.48.0` and the `stable`, `beta`, and `nightly` channels. Future versions of the library may advance the minimum supported version to make use of new language features, but will consider it a breaking change.
+
 ## Getting Started
 
 Add the following lines to your `Cargo.toml` file:
