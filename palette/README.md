@@ -6,7 +6,7 @@ A color management and conversion library that focuses on maintaining correctnes
 
 * Type system representations of color spaces, including RGB, HSL, HSV, HWB, L\*a\*b\*, L\*C\*h°, XYZ and xyY.
 * Copy free conversion to and from color buffers allows simple integration with other crates and systems.
-* Color operations implemented as traits, such as arithmetics, lighten/darken, hue shift, mixing/interpolating, as well as the SVG blend functions.
+* Color operations implemented as traits, such as arithmetic, lighten/darken, hue shifting, mixing/interpolating, and SVG blend functions.
 * Provides types for creating gradients.
 * Color spaces can be customized, using type parameters, to support different levels of precision, linearity, white points, RGB standards, etc.
 * Supports `#[no_std]`, with ony gradients and dynamic named colors disabled.
@@ -72,7 +72,7 @@ let my_lch = Lch::from_color(my_rgb);
 let my_hsl: Hsl = my_lch.into_color();
 ```
 
-It's also possible to integrate custom color types into the system. It could be used for adding new color spaces or to make a user facing API simpler. This example makes it possible for Palette users to easily convert from and into our own `Color` type:
+It's also possible to integrate custom color types into the system, which can be used for adding new color spaces or making a simpler user-facing API. This example makes it possible for Palette users to easily convert from and into our own `Color` type:
 
 ```rust
 use palette::{
@@ -82,7 +82,7 @@ use palette::{
     IntoColor, WithAlpha, Limited, Srgb, Lcha
 };
 
-// This implements conversion to and form all Palette colors
+// This implements conversion to and from all Palette colors
 #[derive(FromColorUnclamped, WithAlpha)]
 // Tell Palette that we will take care of converting to/from sRGB
 #[palette(skip_derives(Rgb), rgb_standard = "encoding::Srgb")]
@@ -175,7 +175,7 @@ It's not a one-liner, but it can still save a lot of repetitive manual work.
 
 ### Pixels And Buffers
 
-When working with image or pixel buffers, or any color type that can be converted to a slice of components (ex. `&[u8]`), the `Pixel` trait provides methods for turning them into slices of palette colors without cloning the whole buffer:
+When working with image or pixel buffers, or any color type that can be converted to a slice of components (ex. `&[u8]`), the `Pixel` trait provides methods for turning them into slices of Palette colors without cloning the whole buffer:
 
 ```rust
 use palette::{Srgb, Pixel};
@@ -208,7 +208,7 @@ This makes it possible to use Palette with any other crate that can convert thei
 
 ### Color Operations
 
-Palette comes with a number of color operations built in, such as saturate/desaturate, hue shift, etc., in the form of operator traits. That means it's possible to write generic functions that perform these operation on any color space that supports them. The output will of course vary a bit, depending on the color space's characteristics.
+Palette comes with a number of color operations built in, such as saturate/desaturate, hue shift, etc., in the form of operator traits. That means it's possible to write generic functions that perform these operation on any color space that supports them. The output will vary depending on the color space's characteristics.
 
 ```rust
 use palette::{Hue, Shade, Mix, Hsl, Hsv};
@@ -283,7 +283,7 @@ let taken_colors: Vec<_> = gradient.take(5).collect();
 
 ### Customizing Color Spaces
 
-The built-in color spaces have been made customizable, to account for as much variation as possible. The more common variants have been exposed as type aliases (like `Srgb`, `Srgba` and `LinSrgb` from above), but it's entirely possible to make custom compositions, including with entirely new parameters. For example, making up your own RGB standard:
+The built-in color spaces have been made customizable to account for as much variation as possible. The more common variants have been exposed as type aliases (like `Srgb`, `Srgba` and `LinSrgb` from above), but it's entirely possible to make custom compositions, including with entirely new parameters. For example, making up your own RGB standard:
 
 ```rust
 use palette::{
@@ -307,7 +307,7 @@ let ee_rgb = EqualEnergySrgb::new(1.0, 0.5, 0.3);
 let srgb = Srgb::adapt_from(ee_rgb);
 ```
 
-It's of course also possible to implement the traits for a custom type, for when the built-in options are not enough.
+It's also possible to implement the traits for a custom type, for when the built-in options are not enough.
 
 ## License
 

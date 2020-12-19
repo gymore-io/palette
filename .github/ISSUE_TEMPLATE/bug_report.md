@@ -8,7 +8,7 @@ labels: defect
 
 ## How To Reproduce
 
-<!-- How can the problem be reproduces? Minimal example programs that demonstrate the problem are preferred! -->
+<!-- How can the problem be reproduced? Minimal example programs that demonstrate the problem are preferred! -->
 
 ## Expected Outcome
 

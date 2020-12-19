@@ -62,11 +62,13 @@ but rather like this:
 Notice how they are written as if they were instructions. Try not to write
 them in past tense.
 
-\* Fixup commits are any commits that fixes mistakes in other commits within the same pull request. Squashing them into the "original" commits makes the history easier to follow.
+\* Fixup commits are any commits that fix mistakes in other commits within the same pull request. Squashing them into the "original" commits makes the history easier to follow.
 
 ## Pull Requests
 
 The header/title of a pull request (PR) should follow the same rules as for commit messages. It should be short and describe the changes as well as possible. The PR description (a.k.a. initial comment, depending on how you view it) should contain a relatively detailed description of the changes. Someone who doesn't know what's going on should be able to look at it and understand what has changed. No secrets or surprises, even if they may be fun.
+
+Both the title and the description will be embedded in the merge commit, and also used as source material for compiling release notes, so it's greatly appreciated if they are as clear and descriptive as possible.
 
 Pull requests that close issues need to mention it in the description. A closed issue should be mentioned as "fixes #123", "closes #123", or [something similar][closing_commits]. This closes the issues automatically when the pull request is merged.
 

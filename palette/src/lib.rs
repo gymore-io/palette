@@ -4,26 +4,26 @@
 //!
 //! # It's Never "Just RGB"
 //!
-//! Colors in, for example, images, are often "gamma corrected", or converted
-//! using some non-linear transfer function into a format like sRGB before being
-//! stored or displayed. This is done as a compression method and to prevent banding,
-//! and is also a bit of a legacy from the ages of the CRT monitors, where the
-//! output from the electron gun was nonlinear. The problem is that these formats
-//! are *non-linear color spaces*, which means that many operations that you may want
-//! to perform on colors (addition, subtraction, multiplication, linear interpolation,
-//! etc.) will work unexpectedly when performed in such a non-linear color space. As
-//! such, the compression has to be reverted to restore linearity and make sure that
-//! many operations on the colors are accurate.
+//! Colors in images are often "gamma corrected", or converted using some
+//! non-linear transfer function into a format like sRGB before being stored or
+//! displayed. This is done as a compression method and to prevent banding; it's
+//! also a bit of a legacy from the ages of the CRT monitors, where the output
+//! from the electron gun was non-linear. The problem is that these formats are
+//! *non-linear color spaces*, which means that many operations that you may
+//! want to perform on colors (addition, subtraction, multiplication, linear
+//! interpolation, etc.) will work unexpectedly when performed in such a
+//! non-linear color space. Thus, the compression has to be reverted to restore
+//! linearity and ensure that many operations on the colors behave as expected.
 //!
 //! For example, this does not work:
 //!
-//! ```rust
+//! ```rust,compile_fail
 //! // An alias for Rgb<Srgb>, which is what most pictures store.
 //! use palette::Srgb;
 //!
 //! let orangeish = Srgb::new(1.0, 0.6, 0.0);
 //! let blueish = Srgb::new(0.0, 0.2, 1.0);
-//! // let whateve_it_becomes = orangeish + blueish; // Does not compile
+//! let whatever_it_becomes = orangeish + blueish; // Does not compile
 //! ```
 //!
 //! Instead, they have to be made linear before adding:
@@ -34,10 +34,10 @@
 //!
 //! let orangeish = Srgb::new(1.0, 0.6, 0.0).into_linear();
 //! let blueish = Srgb::new(0.0, 0.2, 1.0).into_linear();
-//! let whateve_it_becomes = orangeish + blueish;
+//! let whatever_it_becomes = orangeish + blueish;
 //!
 //! // Encode the result back into sRGB and create a byte array
-//! let pixel: [u8; 3] = Srgb::from_linear(whateve_it_becomes)
+//! let pixel: [u8; 3] = Srgb::from_linear(whatever_it_becomes)
 //!     .into_format()
 //!     .into_raw();
 //! ```
@@ -48,7 +48,7 @@
 //!
 //! "RGB" and other tristimulus based spaces like CIE Xyz are probably the most
 //! widely known color spaces. These spaces are great when you want to perform
-//! physically correct math on color (like in a 2d or 3d rendering program) but
+//! physically based math on color (like in a 2D or 3D rendering program) but
 //! there are also color spaces that are not defined in terms of tristimulus
 //! values.
 //!
@@ -57,18 +57,17 @@
 //! encoded as hue, saturation and brightness/lightness. Even though these
 //! spaces are defined using 3 values, they *aren't* based on tristimulus
 //! values, since those three values don't have a direct relation to human
-//! vision (i.e. our S, M, and L cones, as discussed in the previous section).
+//! vision (i.e. our L, M, and S cones).
 //! Such color spaces are excellent when it comes to humans intuitively
-//! selecting color values, though, and as such are the go-to choice when this
-//! interaction is needed. They can then be converted into other color spaces in
-//! order to actually perform modifications to them
+//! selecting color values, and as such are the go-to choice when this
+//! interaction is needed. They can then be converted into other color spaces
+//! to perform modifications to them.
 //!
 //! There's also a group of color spaces that are designed to be perceptually
 //! uniform, meaning that the perceptual change is equal to the numerical
 //! change. An example of this is the CIE L\*a\*b\* color space. These color
 //! spaces are excellent when you want to "blend" between colors in a
-//! *perceptually pleasing* manner (for example, in a data visualization) rather
-//! than a *physically correct* one.
+//! *perceptually pleasing* manner rather than based on *physical light intensity*.
 //!
 //! Selecting the proper color space can have a big impact on how the resulting
 //! image looks (as illustrated by some of the programs in `examples`), and

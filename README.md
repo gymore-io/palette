@@ -4,7 +4,7 @@
 [![Crates.io](https://img.shields.io/crates/v/palette.svg)](https://crates.io/crates/palette/)
 [![Docs.rs](https://docs.rs/palette/badge.svg)](https://docs.rs/palette)
 
-A color management and conversion library that focuses on maintaining correctness, flexibility and ease of use. It makes use of the type system to prevent mistakes and to support a wide range of color spaces, including user defined variants and different ways to integrate it with other libraries.
+A color management and conversion library that focuses on maintaining correctness, flexibility and ease of use. It makes use of the type system to prevent mistakes, support a wide range of color spaces including user defined variants and offer different ways of integrating with other libraries.
 
 [Usage and examples can be found in the `palette` directory](https://github.com/Ogeon/palette/tree/master/palette).
 
