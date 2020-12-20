@@ -14,7 +14,7 @@ A color management and conversion library that focuses on maintaining correctnes
 
 ## Minimum Supported Rust Version (MSRV)
 
-This version has been automatically tested with version `1.48.0` and the `stable`, `beta`, and `nightly` channels. Future versions of the library may advance the minimum supported version to make use of new language features, but will consider it a breaking change.
+This version has been automatically tested with version `1.48.0` and the `stable`, `beta`, and `nightly` channels. Future versions of the library may advance the minimum supported version to make use of new language features, but this will be considered a breaking change.
 
 ## Getting Started
 
