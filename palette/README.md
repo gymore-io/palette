@@ -69,37 +69,43 @@ These are examples of some of the features listed in the feature summary.
 It's possible to convert from one color space to another with the `FromColor` and `IntoColor` traits. They are similar to `From` and `Into`, but tailored for colors:
 
 ```rust
-use palette::{FromColor, IntoColor, Srgb, Lch, Hsl};
+use palette::{FromColor, Hsl, IntoColor, Lch, Srgb};
 
-let my_rgb = Srgb::new(1.0, 0.8, 0.3);
-let my_lch = Lch::from_color(my_rgb);
-let my_hsl: Hsl = my_lch.into_color();
+let my_rgb = Srgb::new(1.0, 0.76, 0.27);
+
+let mut my_lch = Lch::from_color(my_rgb);
+my_lch.hue += 180.0;
+
+let mut my_hsl: Hsl = my_lch.into_color();
+my_hsl.saturation *= 0.3;
+
+let my_new_rgb = Srgb::from_color(my_hsl);
 ```
 
-It's also possible to integrate custom color types into the system, which can be used for adding new color spaces or making a simpler user-facing API. This example makes it possible for Palette users to easily convert from and into our own `Color` type:
+Most of the common color spaces are already implemented in Palette, but some may require something more customized. The conversion traits makes it possible to integrate custom color types into the system. This can for example be used for adding new color spaces or making a simpler user-facing API. The following example shows how it's possible for Palette users to convert from and into a custom made `Color` type:
 
 ```rust
 use palette::{
     convert::FromColorUnclamped,
     encoding,
     rgb::{Rgb, RgbStandard},
-    IntoColor, WithAlpha, Limited, Srgb, Lcha
+    IntoColor, WithAlpha, Clamp, Srgb, Lcha
 };
 
-// This implements conversion to and from all Palette colors
+// This implements conversion to and from all Palette colors.
 #[derive(FromColorUnclamped, WithAlpha)]
-// Tell Palette that we will take care of converting to/from sRGB
+// We have to tell Palette that we will take care of converting to/from sRGB.
 #[palette(skip_derives(Rgb), rgb_standard = "encoding::Srgb")]
 struct Color {
     r: f32,
     g: f32,
     b: f32,
-    // Let Palette know this is our alpha channel
+    // Let Palette know this is our alpha channel.
     #[palette(alpha)]
     a: f32,
 }
 
-// There's no blanket implementation for Self -> Self, unlike From.
+// There's no blanket implementation for Self -> Self, unlike the From trait.
 // This is to better allow cases like Self<A> -> Self<B>.
 impl FromColorUnclamped<Color> for Color {
     fn from_color_unclamped(color: Color) -> Color {
@@ -107,7 +113,7 @@ impl FromColorUnclamped<Color> for Color {
     }
 }
 
-// Convert from any kind of f32 sRGB
+// Convert from any kind of f32 sRGB.
 impl<S> FromColorUnclamped<Rgb<S, f32>> for Color
 where
     S: RgbStandard<Space = encoding::Srgb>,
@@ -118,7 +124,7 @@ where
     }
 }
 
-// Convert into any kind of f32 sRGB
+// Convert into any kind of f32 sRGB.
 impl<S> FromColorUnclamped<Color> for Rgb<S, f32>
 where
     S: RgbStandard<Space = encoding::Srgb>,
@@ -129,9 +135,9 @@ where
     }
 }
 
-// Add the required clamping and validation
-impl Limited for Color {
-    fn is_valid(&self) -> bool {
+// Add the required clamping and validation.
+impl Clamp for Color {
+    fn is_within_bounds(&self) -> bool {
         let zero_to_one = 0.0..=1.0;
 
         zero_to_one.contains(&self.r)
@@ -155,7 +161,7 @@ impl Limited for Color {
 }
 
 
-// This function uses only our `Color`, but Palette users can convert to it
+// This function uses only our `Color`, but Palette users can convert to it.
 fn do_something(color: Color) {
     // ...
 }
@@ -165,7 +171,7 @@ do_something(Lcha::new(60.0, 116.0, 328.0, 0.5).into_color());
 
 
 // This function has the conversion built in and takes any compatible
-// color type as input
+// color type as input.
 fn generic_do_something(color: impl IntoColor<Color>) {
     let color = color.into_color();
     // ...
@@ -228,29 +234,19 @@ where
     color.mix(&new_color, amount)
 }
 
-let new_hsl = transform_color(&Hsl::new(300.0, 1.0, 0.5), 0.8);
-let new_hsv = transform_color(&Hsv::new(300.0, 1.0, 1.0), 0.8);
+let new_hsl = transform_color(&Hsl::new(90.0, 0.70, 0.54), 0.8);
+let new_hsv = transform_color(&Hsv::new(90.0, 0.74, 0.86), 0.8);
 ```
 
 In addition to the operator traits, the SVG blend functions have also been implemented.
 
 ```rust
-use palette::{
-    blend::Blend,
-    Srgba,
-    Alpha
-};
-use approx::assert_relative_eq;
+use palette::{blend::Blend, Srgba};
 
-let color_a = Srgba::new(1.0, 0.0, 1.0, 1.0).into_linear();
-let color_b = Srgba::new(0.0, 1.0, 0.0, 0.5).into_linear();
+let color_a = Srgba::new(0.8, 0.2, 0.2, 1.0).into_linear();
+let color_b = Srgba::new(0.1, 0.1, 0.5, 0.5).into_linear();
 
 let result = color_b.over(color_a); // Regular alpha-over blending.
-
-assert_relative_eq!(
-    Srgba::from_linear(result),
-    Srgba::new(0.7353569830524495, 0.7353569830524495, 0.7353569830524495, 1.0)
-);
 ```
 
 There's also the option to explicitly convert to and from premultiplied alpha, to avoid converting back and forth more than necessary, using `Blend::into_premultiplied` and `Blend::from_premultiplied`.
@@ -263,12 +259,12 @@ The `Gradient` type provides basic support for linear gradients in any color spa
 use palette::{Gradient, LinSrgb};
 
 let gradient = Gradient::new(vec![
-    LinSrgb::new(1.0, 1.0, 0.0),
-    LinSrgb::new(1.0, 0.0, 1.0),
-    LinSrgb::new(0.0, 0.0, 1.0),
+    LinSrgb::new(0.8, 0.2, 0.2),
+    LinSrgb::new(0.1, 0.1, 0.5),
+    LinSrgb::new(0.1, 0.3, 0.8),
 ]);
 
-let taken_colors: Vec<_> = gradient.take(5).collect();
+let taken_colors: Vec<_> = gradient.take(10).collect();
 ```
 
 There's also support for arbitrary spacing between the input points:
@@ -276,13 +272,13 @@ There's also support for arbitrary spacing between the input points:
 ```rust
 use palette::{Gradient, LinSrgb};
 
-let gradient = Gradient::with_domain(vec![
-    (0.0, LinSrgb::new(1.0, 1.0, 0.0)), // A pair of position and color.
-    (0.2, LinSrgb::new(1.0, 0.0, 1.0)),
-    (1.0, LinSrgb::new(0.0, 0.0, 1.0)),
+let gradient = Gradient::from([
+    (0.0, LinSrgb::new(0.8, 0.2, 0.2)), // A pair of position and color.
+    (0.2, LinSrgb::new(0.1, 0.1, 0.5)),
+    (1.0, LinSrgb::new(0.1, 0.3, 0.8)),
 ]);
 
-let taken_colors: Vec<_> = gradient.take(5).collect();
+let taken_colors: Vec<_> = gradient.take(10).collect();
 ```
 
 ### Customizing Color Spaces
@@ -300,14 +296,14 @@ use palette::{
 
 // RgbStandard and RgbSpace are implemented for 2 and 3 element tuples,
 // allowing mixing and matching of existing types. In this case we are
-// combining sRGB primaries, the CIE equal energy white point and sRGB
-// transfer function (a.k.a. encoding or gamma).
+// combining sRGB primaries, the CIE equal energy white point and the
+// sRGB transfer function (a.k.a. encoding or gamma).
 type EqualEnergyStandard = (encoding::Srgb, white_point::E, encoding::Srgb);
 type EqualEnergySrgb<T> = Rgb<EqualEnergyStandard, T>;
 
 let ee_rgb = EqualEnergySrgb::new(1.0, 0.5, 0.3);
 
-// We need to use chromatic adaptation when going between white points
+// We need to use chromatic adaptation when going between white points.
 let srgb = Srgb::adapt_from(ee_rgb);
 ```
 
