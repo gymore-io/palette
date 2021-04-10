@@ -82,7 +82,10 @@ my_hsl.saturation *= 0.3;
 let my_new_rgb = Srgb::from_color(my_hsl);
 ```
 
-Most of the common color spaces are already implemented in Palette, but some may require something more customized. The conversion traits makes it possible to integrate custom color types into the system. This can for example be used for adding new color spaces or making a simpler user-facing API. The following example shows how it's possible for Palette users to convert from and into a custom made `Color` type:
+This image shows the starting color and the results of the two changes:
+![The result of each step in the "converting" example.](https://raw.githubusercontent.com/Ogeon/palette/b80bcb4f130b745acdd8ba747ca05554fa3c0906/gfx/readme_converting.png)
+
+Most of the common color spaces are already implemented in Palette, but some situations may require something more customized. The conversion traits makes it possible to integrate custom color types into the system. This can for example be used for adding new color spaces or making a simpler user-facing API. The following example shows how it's possible for Palette users to convert from and into a custom made `Color` type:
 
 ```rust
 use palette::{
@@ -202,6 +205,10 @@ fn swap_red_and_blue(my_rgb_image: &mut [u8]) {
 }
 ```
 
+| Before | After |
+|--------|-------|
+| ![The fruit image before swapping the red and blue color channels.](https://raw.githubusercontent.com/Ogeon/palette/b80bcb4f130b745acdd8ba747ca05554fa3c0906/example-data/input/fruits.png) | ![The fruit image with the red and blue color channels swapped.](https://raw.githubusercontent.com/Ogeon/palette/b80bcb4f130b745acdd8ba747ca05554fa3c0906/gfx/readme_pixels_and_buffers.png) |
+
 It's also possible to create a single color from a slice or array. Let's say we are using something that implements `AsMut<[u8; 3]>`:
 
 ```rust
@@ -238,6 +245,9 @@ let new_hsl = transform_color(&Hsl::new(90.0, 0.70, 0.54), 0.8);
 let new_hsv = transform_color(&Hsv::new(90.0, 0.74, 0.86), 0.8);
 ```
 
+This image shows the transition from the color to `new_color` in HSL and HSV:
+![Gradients showing the transition from the starting color to the modified color in HSL and HSV.](https://raw.githubusercontent.com/Ogeon/palette/b80bcb4f130b745acdd8ba747ca05554fa3c0906/gfx/readme_color_operations_1.png)
+
 In addition to the operator traits, the SVG blend functions have also been implemented.
 
 ```rust
@@ -248,6 +258,9 @@ let color_b = Srgba::new(0.1, 0.1, 0.5, 0.5).into_linear();
 
 let result = color_b.over(color_a); // Regular alpha-over blending.
 ```
+
+Here's an image of color A, color B (without transparency) and the blended color:
+![Color A, Color B and the resulting blended color.](https://raw.githubusercontent.com/Ogeon/palette/b80bcb4f130b745acdd8ba747ca05554fa3c0906/gfx/readme_color_operations_2.png)
 
 There's also the option to explicitly convert to and from premultiplied alpha, to avoid converting back and forth more than necessary, using `Blend::into_premultiplied` and `Blend::from_premultiplied`.
 
@@ -267,6 +280,9 @@ let gradient = Gradient::new(vec![
 let taken_colors: Vec<_> = gradient.take(10).collect();
 ```
 
+Here's the gradient as both its continuous form and as the 10 colors from `.take(10)`:
+![An illustration of the gradient with the continuous form above a row of discrete color swatches.](https://raw.githubusercontent.com/Ogeon/palette/b80bcb4f130b745acdd8ba747ca05554fa3c0906/gfx/readme_gradients_1.png)
+
 There's also support for arbitrary spacing between the input points:
 
 ```rust
@@ -280,6 +296,9 @@ let gradient = Gradient::from([
 
 let taken_colors: Vec<_> = gradient.take(10).collect();
 ```
+
+Here's the gradient after the middle point has been moved more towards the beginning:
+![An illustration of the gradient with the continuous form above a row of discrete color swatches.](https://raw.githubusercontent.com/Ogeon/palette/b80bcb4f130b745acdd8ba747ca05554fa3c0906/gfx/readme_gradients_2.png)
 
 ### Customizing Color Spaces
 
